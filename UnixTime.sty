@@ -1,0 +1,93 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/UnixTime}{2024-11-14}{1.0}{Convert LaTeX3 time to Unix time}
+
+\tl_new:N\g_unixtime_tl
+\int_new:N\g_unixyear_int
+\int_new:N\g_unixmonth_int
+\int_new:N\g_unixday_int
+\int_new:N\g_unixhour_int
+\int_new:N\g_unixminute_int
+\int_new:N\g_unixsecond_int
+
+\regex_const:Nn\g_unixtime_regex{\A D:(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(?:Z|([+\-](\d+)'(\d+)'))\Z}
+
+% #1: year
+% A LaTeX3 int that is 1 if #1 is a leap year and 0 otherwise.
+\cs_new:Nn\unixtime_leapyear:n{%
+  \int_eval:n{
+    1
+    -\int_sign:n{\int_mod:nn{#1}{4}}
+    +\int_sign:n{\int_mod:nn{#1}{100}}
+    -\int_sign:n{\int_mod:nn{#1}{400}}
+  }%
+}
+% #1: year
+% A LaTeX3 int that corresponds to the number of leap days in [1970, #1).
+\cs_new:Nn\unixtime_leapoff:n{%
+  \int_eval:n{
+    \int_div_truncate:nn{#1}{4}
+    - \int_div_truncate:nn{#1}{100}
+    + \int_div_truncate:nn{#1}{400}
+    - \unixtime_leapyear:n{#1}
+    - 477
+  }
+}
+% #1: year, #2: month
+% A LaTeX3 int that correponds to the number of days in [#1-1-1, #1-#2-1).
+\cs_new:Nn\unixtime_monthoff:nn{%
+  \int_eval:n{
+    30 * (#2 - 1)
+    - \int_sign:n{\int_max:nn{#2 - 2}{0}} * (2 - \unixtime_leapyear:n{#1})
+    + \int_div_truncate:nn{(#2 + \int_sign:n{\int_max:nn{#2 - 8}{0}})}{2}
+  }%
+}
+% #1: year, #2: month, #3: day
+% A LaTeX3 int that correponds to the number of days in [1970-1-1, #1-#2-#3).
+\cs_new:Nn\unixtime_dayoff:nnn{%
+  \int_eval:n{(#1 - 1970) * 365 + \unixtime_leapoff:n{#1} + \unixtime_monthoff:nn{#1}{#2} + (#3 - 1)}%
+}
+% #1: Timestamp as described in the documentation of \file_timestamp:n
+% #2: Destination LaTeX3 int
+% Compute the Unix timestamp corresponding to #1 and stores it in #2.
+\cs_new:Nn\unixtime_parse:nN{%
+  \regex_extract_once:NnN\g_unixtime_regex{#1}\l_tmpa_seq%
+  \int_set:Nn\g_unixyear_int{\seq_item:Nn\l_tmpa_seq{2}}%
+  \int_set:Nn\g_unixmonth_int{\seq_item:Nn\l_tmpa_seq{3}}%
+  \int_set:Nn\g_unixday_int{\seq_item:Nn\l_tmpa_seq{4}}%
+  \int_set:Nn\g_unixhour_int{\seq_item:Nn\l_tmpa_seq{5}}%
+  \int_set:Nn\g_unixminute_int{\seq_item:Nn\l_tmpa_seq{6}}%
+  \int_set:Nn\g_unixsecond_int{\seq_item:Nn\l_tmpa_seq{7}}%
+  \tl_if_empty:eF{\seq_item:Nn\l_tmpa_seq{8}}{
+    \int_add:Nn\g_unixhour_int{\seq_item:Nn\l_tmpa_seq{9}}%
+    \int_add:Nn\g_unixminute_int{\seq_item:Nn\l_tmpa_seq{10}}%
+  }%
+  \int_set:Nn#2{
+    (
+      (
+        \unixtime_dayoff:nnn{\g_unixyear_int}{\g_unixmonth_int}{\g_unixday_int} * 24
+        + \g_unixhour_int
+      ) * 60 + \g_unixminute_int
+    ) * 60 + \g_unixsecond_int
+  }%
+}
+\cs_generate_variant:Nn\unixtime_parse:nN{VN}
+% #1: A file name in the form accepted by \file_get_timestamp
+% #2: Destination LaTeX3 int
+% Compute the Unix timestamp corresponding to the modification time of #1 and store it in #2.
+\cs_new:Nn\unixtime_file_get:nN{%
+  \file_get_timestamp:nN{#1}\g_unixtime_tl%
+  \unixtime_parse:VN\g_unixtime_tl#2%
+}
+% #1: Destination LaTeX3 int
+% Compute the Unix timestamp corresponding to the timestamp of the current job and store it in #1.
+\cs_new:Nn\unixtime_job:N{%
+  \unixtime_parse:VN\c_sys_timestamp_str#1%
+}
+% #1: A file name in the form accepted by \file_get_timestamp
+% #2: Destination LaTeX3 int
+% Compute the age of #1 in seconds and store it in #2.
+\cs_new:Nn\unixtime_file_age:nN{%
+  \unixtime_file_get:nN{#1}\l_tmpa_int%
+  \unixtime_job:N\l_tmpb_int%
+  \int_set:Nn#2{\l_tmpb_int-\l_tmpa_int}%
+}

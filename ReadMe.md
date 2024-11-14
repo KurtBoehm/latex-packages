@@ -13,3 +13,4 @@ The packages are:
 - `MemoirHeader`: Configure the `memoir` headers modified by `Memoir` to use a given font. Originally designed to use Cormorant Garamond for the headers and EB Garamond for the text, but other combinations are possible, too.
 - `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
 - `Units`: Set up `siunitx` and add a few units.
+- `UnixTime`: Convert the timestamps provided by LaTeX3 to Unix timestamps (without leap seconds), with commands to query Unix timestamps directly.
