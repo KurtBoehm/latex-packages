@@ -1,0 +1,216 @@
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{packages/Fonts}{2024-11-14}{1.0}{Fonts}
+\RequirePackage{xparse}
+
+\usepackage[math-style=ISO,bold-style=ISO]{unicode-math}
+
+\let\codefamily\ttfamily
+\DeclareTextFontCommand{\textcode}{\codefamily}
+
+\setoperatorfont\text
+\NewDocumentCommand{\BoldMath}{m}{\boldmath\(#1\)}
+
+\keys_define:nn{font_config_keys}{
+  FontFolder.tl_set:N = \l_font_config_folder_tl,
+  FontFolder.initial:n = fonts/,
+  FontFolder.value_required:n = true,
+  NumberStyle.tl_set:N = \l_font_config_numbers_tl,
+  NumberStyle.initial:n = Lining,
+  NumberStyle.value_required:n = true,
+
+  CascadiaMono.code:n = {
+    \setmonofont{CascadiaMono}[
+      Path           = \tl_use:N\l_font_config_folder_tl cascadia-mono/,
+      Extension      = .otf,
+      UprightFont    = *-Regular,
+      BoldFont       = *-Bold,
+      ItalicFont     = *-Italic,
+      BoldItalicFont = *-BoldItalic,
+      Scale          = MatchLowercase,
+    ]
+  },
+  CascadiaMono.value_forbidden:n = true,
+  CascadiaMonoLight.code:n = {
+    \setmonofont{CascadiaMono}[
+      Path           = \tl_use:N\l_font_config_folder_tl cascadia-mono/,
+      Extension      = .otf,
+      UprightFont    = *-Light,
+      BoldFont       = *-SemiBold,
+      ItalicFont     = *-LightItalic,
+      BoldItalicFont = *-SemiBoldItalic,
+      Scale          = MatchLowercase,
+    ]
+  },
+  CascadiaMonoLight.value_forbidden:n = true,
+  Cochineal.code:n = {\usepackage{cochineal}},
+  Cochineal.value_forbidden:n = true,
+  CormorantGaramond.code:n = {
+    \setmainfont[
+      Extension      = .ttf,
+      UprightFont    = *-Regular,
+      ItalicFont     = *-Italic,
+      BoldFont       = *-Bold,
+      BoldItalicFont = *-BoldItalic,
+      Ligatures      = TeX,
+    ]{CormorantGaramond}
+  },
+  CormorantGaramond.value_forbidden:n = true,
+  CormorantGaramondFam.code:n = {
+    \newfontfamily\cormorant[
+      Extension      = .ttf,
+      UprightFont    = *-Regular,
+      ItalicFont     = *-Italic,
+      BoldFont       = *-Bold,
+      BoldItalicFont = *-BoldItalic,
+      Ligatures      = TeX,
+    ]{CormorantGaramond}
+  },
+  CormorantGaramondFam.value_forbidden:n = true,
+  EBGaramond.code:n = {
+    \setmainfont{EBGaramond}[
+      Extension      = .otf,
+      UprightFont    = *-Regular,
+      ItalicFont     = *-Italic,
+      BoldFont       = *-Bold,
+      BoldItalicFont = *-Bold Italic,
+      StylisticSet   = 5,
+    ]
+  },
+  EBGaramond.value_forbidden:n = true,
+  Emoji.code:n = {\RequirePackage{emoji}},
+  Emoji.value_forbidden:n = true,
+  GaramondMath.code:n = {
+    \setmathfont{Garamond-Math.otf}[StylisticSet=3]
+  },
+  GaramondMath.value_forbidden:n = true,
+  Erewhon.code:n = {
+    \RequirePackage[math-style=ISO, bold-style=ISO]{fourier-otf}
+    \tracinglostchars=0
+    \setmathfont{Erewhon-Math-Bold.otf}[version=bold]
+    \tracinglostchars=2
+    \RenewDocumentCommand{\BoldMath}{m}{\tracinglostchars=0\boldmath\(#1\)\tracinglostchars=2}
+  },
+  Erewhon.value_forbidden:n = true,
+  FiraSans.code:n = {
+    \setsansfont{FiraSans}[
+      Extension      = .otf,
+      UprightFont    = *-Regular,
+      BoldFont       = *-Bold,
+      ItalicFont     = *-Italic,
+      BoldItalicFont = *-BoldItalic,
+      Ligatures      = TeX,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+  },
+  FiraSans.value_forbidden:n = true,
+  FiraSansLight.code:n = {
+    \setsansfont{FiraSans}[
+      Extension      = .otf,
+      UprightFont    = *-Light,
+      BoldFont       = *-Book,
+      ItalicFont     = *-LightItalic,
+      BoldItalicFont = *-BookItalic,
+      Ligatures      = TeX,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+  },
+  FiraSansLight.value_forbidden:n = true,
+  FiraMath.code:n = {
+    \setmathfont{FiraMath-Regular.otf}
+  },
+  FiraMath.value_forbidden:n = true,
+  FiraMathLight.code:n = {
+    \setmathfont{FiraMath-Light.otf}[
+      Path=\tl_use:N\l_font_config_folder_tl fira-math/
+    ]
+    \setmathfont{FiraMath-Regular.otf}[version=bold]
+    \g@addto@macro\bfseries{\boldmath}
+  },
+  FiraMathLight.value_forbidden:n = true,
+  GFSNeoHellenic.code:n = {
+    \usepackage[gfsneohellenic]{fontsetup}
+  },
+  GFSNeoHellenic.value_forbidden:n = true,
+  IosevkaMono.code:n = {
+    \setmonofont{IosevkaMono}[
+      Path           = \tl_use:N\l_font_config_folder_tl iosevka-mono/,
+      Extension      = .ttf,
+      UprightFont    = *-Regular,
+      BoldFont       = *-Bold,
+      ItalicFont     = *-Italic,
+      BoldItalicFont = *-BoldItalic,
+      Scale          = MatchLowercase,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+  },
+  IosevkaMono.value_forbidden:n = true,
+  IosevkaMonoLight.code:n = {
+    \setmonofont{IosevkaMono}[
+      Path           = \tl_use:N\l_font_config_folder_tl iosevka-mono/,
+      Extension      = .ttf,
+      UprightFont    = *-Light,
+      BoldFont       = *-Regular,
+      ItalicFont     = *-LightItalic,
+      BoldItalicFont = *-Italic,
+      Scale          = MatchLowercase,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+  },
+  IosevkaMonoLight.value_forbidden:n = true,
+  IosevkaQuasi.code:n = {
+    \newfontfamily\IosevkaQuasi{IosevkaQuasi}[
+      Path           = \tl_use:N\l_font_config_folder_tl iosevka-quasi/,
+      Extension      = .ttf,
+      UprightFont    = *-Regular,
+      BoldFont       = *-Bold,
+      ItalicFont     = *-Italic,
+      BoldItalicFont = *-BoldItalic,
+      Scale          = MatchLowercase,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+    \let\codefamily\IosevkaQuasi
+  },
+  IosevkaQuasi.value_forbidden:n = true,
+  IosevkaQuasiLight.code:n = {
+    \newfontfamily\IosevkaQuasi{IosevkaQuasi}[
+      Path           = \tl_use:N\l_font_config_folder_tl iosevka-quasi/,
+      Extension      = .ttf,
+      UprightFont    = *-Light,
+      BoldFont       = *-Regular,
+      ItalicFont     = *-LightItalic,
+      BoldItalicFont = *-Italic,
+      Scale          = MatchLowercase,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+    \let\codefamily\IosevkaQuasi
+  },
+  IosevkaQuasiLight.value_forbidden:n = true,
+  PlayfairDisplay.code:n = {\usepackage{PlayfairDisplay}},
+  PlayfairDisplay.value_forbidden:n = true,
+  SFDefault.code:n = {\let\familydefault\sfdefault},
+  SFDefault.value_forbidden:n = true,
+  TwemojiMozilla.code:n = {
+    \RequirePackage{emoji}
+    \setemojifont{TwemojiMozilla}[
+      Path      = \tl_use:N\l_font_config_folder_tl twemoji-mozilla/,
+      Extension = .ttf,
+      Scale     = MatchUppercase,
+    ]
+  },
+  TwemojiMozilla.value_forbidden:n = true,
+  Ysabeau.code:n = {
+    \setsansfont{Ysabeau}[
+      Extension      = .otf,
+      UprightFont    = *-Regular,
+      BoldFont       = *-Bold,
+      ItalicFont     = *-Italic,
+      BoldItalicFont = *-BoldItalic,
+      Ligatures      = TeX,
+      Numbers        = \l_font_config_numbers_tl,
+    ]
+  },
+  Ysabeau.value_forbidden:n = true,
+}
+
+\ProcessKeysOptions{font_config_keys}
+\AtBeginDocument{\let\UrlFont\codefamily}
