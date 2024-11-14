@@ -1,0 +1,29 @@
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{packages/MemoirHeader}{2024-11-14}{1.0}{Set the memoir header font}
+\RequirePackage{packages/Memoir}
+
+\cs_new:Nn\memoir_header_font:{}
+\keys_define:nn{memoir_header_keys}{
+  font.code = {\cs_set:Nn\memoir_header_font:{#1}},
+  font.value_required:n = true,
+}
+\ProcessKeysOptions{memoir_header_keys}
+
+\appto{\@bspretitle}{\memoir_header_font:}
+\appto{\@bspreauthor}{\memoir_header_font:}
+\appto{\@bspredate}{\memoir_header_font:}
+
+\appto{\chapnamefont}{\memoir_header_font:}
+\appto{\chapnumfont}{\memoir_header_font:}
+\appto{\chaptitlefont}{\memoir_header_font:}
+
+\appto{\secheadstyle}{\memoir_header_font:}
+\appto{\subsecheadstyle}{\memoir_header_font:}
+\appto{\subsubsecheadstyle}{\memoir_header_font:}
+
+\preto{\plainefootc}{\memoir_header_font:}
+\preto{\plainofootc}{\memoir_header_font:}
+\preto{\headingseheadl}{\memoir_header_font:}
+\preto{\headingseheadr}{\memoir_header_font:}
+\preto{\headingsoheadl}{\memoir_header_font:}
+\preto{\headingsoheadr}{\memoir_header_font:}

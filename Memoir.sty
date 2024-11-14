@@ -1,0 +1,27 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/Memoir}{2024-11-14}{1.0}{Configure memoir with a lot of small caps}
+
+%\setlength{\droptitle}{.15\textheight}
+\pretitle{\vfill\begin{centering}\HUGE\scshape}
+\posttitle{\par\end{centering}\vspace{8em}}
+\preauthor{\begin{center}\huge\scshape}
+\postauthor{\par\end{center}}
+\predate{\begin{center}\Large\scshape}
+\postdate{\par\end{center}\vfill}
+
+\def\aftertoctitle{\thispagestyle{empty}\afterchaptertitle}
+
+\def\chapnamefont{\huge\bfseries\scshape}
+\def\chapnumfont{\huge\bfseries\scshape}
+\def\chaptitlefont{\Huge\bfseries\scshape}
+
+\setsecheadstyle{\LARGE\bfseries\scshape}
+\setsubsecheadstyle{\Large\bfseries\scshape}
+\setsubsubsecheadstyle{\large\bfseries\scshape}
+
+\nouppercaseheads
+\makeevenfoot{plain}{}{\scshape\thepage}{}
+\makeoddfoot{plain}{}{\scshape\thepage}{}
+\makeevenhead{headings}{\scshape\thepage}{}{\scshape\leftmark}
+\makeoddhead{headings}{\scshape\rightmark}{}{\scshape\thepage}
+%\makeheadrule{headings}{\textwidth}{.25pt}
