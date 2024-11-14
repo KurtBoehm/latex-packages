@@ -11,3 +11,4 @@ The packages are:
 - `Maths`: A lot of mathematical utilities. `\del` is the most noteworthy and allows for uses such as `\del(a)` and `\del{b}`, which are typeset using `\left` and `\right`.
 - `Memoir`: Configure `memoir` to use small caps in a lot of places.
 - `MemoirHeader`: Configure the `memoir` headers modified by `Memoir` to use a given font. Originally designed to use Cormorant Garamond for the headers and EB Garamond for the text, but other combinations are possible, too.
+- `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
