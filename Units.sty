@@ -1,0 +1,12 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/Units}{2024-11-14}{1.0}{Extend siunitx}
+
+\usepackage{siunitx}
+\sisetup{
+  parse-numbers=false,
+  per-mode=symbol,
+  range-phrase=--,
+  range-units=single,
+}
+\DeclareSIUnit{\year}{y}
+\DeclareSIUnit{\flop}{FLOP}
