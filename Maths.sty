@@ -1,0 +1,387 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/Maths}{2024-11-14}{1.0}{Mathematics}
+
+\DeclareMathOperator*\argmax{arg\,max}
+\DeclareMathOperator*\argmin{arg\,min}
+
+\ProvideDocumentCommand{\clap}{m}{\hb@xt@\z@{\hss#1\hss}}
+\cs_new:Nn\MT_mathclap:Nn{{}\clap{$\m@th#1{#2}$}}
+\ProvideDocumentCommand{\mathclap}{O{\@empty}}{
+  \ifx\@empty#1\@empty
+    \expandafter \mathpalette \expandafter \MT_mathclap:Nn
+  \else
+    \expandafter \MT_mathclap:Nn \expandafter #1
+  \fi
+}
+
+% \mathclap{#1}
+\NewDocumentCommand{\gen@cmd@clap@subsup}{mmm}{#1\c_math_subscript_token{\mathclap{#2}}\c_math_superscript_token{\mathclap{#3}}}
+\NewDocumentCommand{\gen@cmd@clap@supsub}{mmm}{#1\c_math_superscript_token{\mathclap{#2}}_{\mathclap{#3}}}
+\NewDocumentCommand{\gen@cmd@clap@sub}{mm}{\peek_catcode_remove:NTF\c_math_superscript_token{\gen@cmd@clap@subsup{#1}{#2}}{#1\c_math_subscript_token{\mathclap{#2}}}}
+\NewDocumentCommand{\gen@cmd@clap@sup}{mm}{\peek_catcode_remove:NTF\c_math_subscript_token{\gen@cmd@clap@supsub{#1}{#2}}{#1\c_math_superscript_token{\mathclap{#2}}}}
+\NewDocumentCommand{\gen@cmd@clap}{m}{%
+  \peek_catcode_remove:NTF\c_math_superscript_token
+  {\gen@cmd@clap@sup{\sum}}
+  {\peek_catcode_remove:NTF\c_math_subscript_token
+    {\gen@cmd@clap@sub{\sum}}
+    {\text{\textcolor{red}{???}}}
+  }%
+}
+\NewDocumentCommand{\sumclap}{}{\gen@cmd@clap{\sum}}
+
+\NewDocumentCommand{\ifrac@bb}{mm}{{#1}/{#2}}
+\NewDocumentCommand{\ifrac@bp}{mr()}{\ifrac@bb{#1}{\del(#2)}}
+
+\NewDocumentCommand{\ifrac@b}{m}{%
+  \peek_charcode:NTF\bgroup{\ifrac@bb{#1}}{%
+    \peek_charcode:NTF({\ifrac@bp{#1}}{%
+      \error%
+    }%
+  }%
+}
+\NewDocumentCommand{\ifrac@p}{r()}{\ifrac@b{\del(#1)}}
+
+\NewDocumentCommand{\ifrac}{}{%
+  \peek_charcode:NTF\bgroup{\ifrac@b}{%
+    \peek_charcode:NTF({\ifrac@p}{%
+      \error%
+    }%
+  }%
+}
+
+\cs_new:Nn\left_fix:{\mathopen{}\mathclose\bgroup\left}
+\cs_new:Nn\right_fix:{\aftergroup\egroup\right}
+
+\seq_new:N\multiline_delimited_seq
+\tl_new:N\multiline_delimited_tl
+\cs_new:Nn\multiline_delimited:nnnn{%
+  \seq_gset_split:Nnn\multiline_delimited_seq{\\}{#2}%
+  \tl_gset:Nn\multiline_delimited_tl{#1\seq_use:Nn\multiline_delimited_seq{}}%
+  \left_fix:#3 \vphantom{\tl_use:N\multiline_delimited_tl}{#1}\right_fix:. &%
+  \left_fix:. \bgroup\seq_use:Nn\multiline_delimited_seq{\egroup\right_fix:.\\&\left_fix:.\bgroup}%
+  \egroup\vphantom{\tl_use:N\multiline_delimited_tl}\right_fix:#4%
+}
+\NewDocumentCommand{\MultilineSet}{mm}{%
+  \multiline_delimited:nnnn{#1 :}{#2}{\{}{\}}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% sub_sup_helper and its helpers.                                                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% #1: What to do when only a subscript occurrs.
+% #2: What to do when a sub- and a superscript occurr.
+% #3: The subscript.
+\cs_new:Nn\sub_sup_helper_sub:NNn{%
+  \peek_catcode_remove:NTF\c_math_superscript_token{#2{#3}}{#1{#3}}%
+}
+
+% #1: What to do when a sub- and a superscript occurr.
+% #2: The superscript.
+% #3: The subscript.
+\cs_new:Nn\sub_sup_helper_sup_sub:Nnn{#1{#3}{#2}}
+
+% #1: What to do when only a superscript occurrs.
+% #2: What to do when a sub- and a superscript occurr.
+% #3: The superscript.
+\cs_new:Nn\sub_sup_helper_sup:NNn{%
+  \peek_catcode_remove:NTF\c_math_subscript_token{\sub_sup_helper_sup_sub:Nnn#2{#3}}{#1{#3}}%
+}
+
+% Allows a command to specify what to do when a subscript, a superscript
+%  or a combination of both occurr.
+% #1: What to do when neither a subscript nor a superscript occurr. Gets no arguments.
+% #2: What to do when only a subscript occurs. Gets one argument: The subscript.
+% #3: What to do when only a superscript occurs. Gets one argument: The superscript.
+% #4: What to do when a sub- and a superscript occurr.
+%     Gets two arguments: The sub- and the superscript.
+\cs_new:Nn\sub_sup_helper:NNNN{%
+  \peek_catcode_remove:NTF\c_math_subscript_token{%
+    \sub_sup_helper_sub:NNn#2#4%
+  }{%
+    \peek_catcode_remove:NTF\c_math_superscript_token{%
+      \sub_sup_helper_sup:NNn#3#4%
+    }{#1}%
+  }%
+}
+\cs_generate_variant:Nn\sub_sup_helper:NNNN{cccc}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SubSup and its helpers.                                                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tl_new:N\g_sub_sup_name_tl
+
+\keys_define:nn{subsup_keys}{
+  subsup/sub.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _sub_code:n}{#1}},
+  subsup/sup.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _sup_code:n}{#1}},
+  subsup/aroundnone.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_none_code:n}{#1}},
+  subsup/aroundsub.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sub_code:n}{#1}},
+  subsup/aroundsup.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sup_code:n}{#1}},
+  subsup/aroundsubsup.code:n = {\cs_gset:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sub_sup_code:n}{#1}},
+}
+\cs_new:Nn\subsup_options:n{%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _sub_code:n}{##1}%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _sup_code:n}{##1}%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_none_code:n}{##1}%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sub_code:n}{##1}%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sup_code:n}{##1}%
+  \cs_new:cn{subsup_\tl_use:N\g_sub_sup_name_tl _around_sub_sup_code:n}{##1}%
+  \keys_set_known:nn{subsup_keys}{#1}%
+}
+
+\cs_new:Nn\subsup_prepare:nn{\begingroup%
+  \tl_set:Nn\g_sub_sup_name_tl{#1}%
+  \subsup_options:n{#2}%
+\endgroup}
+\cs_new:Nn\subsup_define:nn{%
+  \cs_new:cn{sub_sup_#1_none:}{\use:c{subsup_#1_around_none_code:n}{#2}}%
+  \cs_new:cn{sub_sup_#1_sub:n}{%
+    \use:c{subsup_#1_around_sub_code:n}{%
+      #2\c_math_subscript_token{\use:c{subsup_#1_sub_code:n}{##1}}%
+    }%
+  }%
+  \cs_new:cn{sub_sup_#1_sup:n}{%
+    \use:c{subsup_#1_around_sup_code:n}{%
+      #2\c_math_superscript_token{\use:c{subsup_#1_sup_code:n}{##1}}%
+    }%
+  }%
+  \cs_new:cn{sub_sup_#1_sub_sup:nn}{%
+    \use:c{subsup_#1_around_sub_sup_code:n}{%
+      #2\c_math_subscript_token{\use:c{subsup_#1_sub_code:n}{##1}}\c_math_superscript_token{\use:c{subsup_#1_sup_code:n}{##2}}%
+    }%
+  }%
+  \exp_after:wN\NewDocumentCommand\cs:w #1\cs_end:{}{%
+    \sub_sup_helper:cccc{sub_sup_#1_none:}{sub_sup_#1_sub:n}{sub_sup_#1_sup:n}{sub_sup_#1_sub_sup:nn}%
+  }
+}
+
+% #1: Name of the command.
+% #2: The options.
+% #3: The content of the command.
+\NewDocumentCommand{\SubSup}{mmm}{%
+  \subsup_prepare:nn{#1}{#2}%
+  \subsup_define:nn{#1}{#3}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \del and its helpers.                                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\int_zero_new:N\g_del_depth_int
+
+\keys_define:nn{del_keys}{
+  begin.code:n = {%
+    \cs_set:cn{del_begin_command_\int_to_alph:n{\g_del_depth_int}:n}{#1}%
+  },
+  end.code:n = {%
+    \cs_set:cn{del_end_command_\int_to_alph:n{\g_del_depth_int}:n}{#1}%
+  },
+  low.meta:n = {begin = {##1}, end = {##1}},
+  low.value_forbidden:n = true,
+  big.meta:n = {begin = {\mathopen{}\bigl##1}, end = {\bigr##1\mathclose{}}},
+  big.value_forbidden:n = true,
+  Big.meta:n = {begin = {\mathopen{}\Bigl##1}, end = {\Bigr##1\mathclose{}}},
+  Big.value_forbidden:n = true,
+  bigg.meta:n = {begin = {\mathopen{}\biggl##1}, end = {\biggr##1\mathclose{}}},
+  bigg.value_forbidden:n = true,
+  Bigg.meta:n = {begin = {\mathopen{}\Biggl##1}, end = {\Biggr##1\mathclose{}}},
+  Bigg.value_forbidden:n = true,
+  del/code.code:n = {%
+    \cs_set:cn{del_transform_command_\int_to_alph:n{\g_del_depth_int}:nnn}{#1}%
+  },
+}
+\cs_new:Nn\del_options:n{%
+  \cs_set:cn{del_begin_command_\int_to_alph:n{\g_del_depth_int}:n}{\mathopen{}\left##1}%
+  \cs_set:cn{del_end_command_\int_to_alph:n{\g_del_depth_int}:n}{\right##1\mathclose{}}%
+  \cs_set:cn{del_transform_command_\int_to_alph:n{\g_del_depth_int}:nnn}{%
+    \use:c{del_begin_command_\int_to_alph:n{\g_del_depth_int}:n}{##1}%
+    ##2%
+    \use:c{del_end_command_\int_to_alph:n{\g_del_depth_int}:n}{##3}%
+  }%
+  \keys_set_known:nn{del_keys}{#1}%
+}
+
+% #1: prefix
+% #2: options
+% #3: start delimiter
+% #4: contents
+% #5: end delimiters
+\cs_new:Nn\del_set:nnnnn{{%
+  \int_incr:N\g_del_depth_int%
+  \del_options:n{#2}%
+  #1%
+  \use:c{del_transform_command_\int_to_alph:n{\g_del_depth_int}:nnn}{#3}{#4}{#5}%
+}}
+
+\NewDocumentCommand{\del@brace}{mmm}{\del_set:nnnnn{#1}{#2}{\{}{#3}{\}}}
+\NewDocumentCommand{\del@brack}{mmr[]}{\del_set:nnnnn{#1}{#2}{[}{#3}{]}}
+\NewDocumentCommand{\del@paren}{mmr()}{\del_set:nnnnn{#1}{#2}{(}{#3}{)}}
+\NewDocumentCommand{\del@angle}{mmr<>}{\del_set:nnnnn{#1}{#2}{\langle}{#3}{\rangle}}
+
+\NewDocumentCommand{\del@abs}{mmr||}{\del_set:nnnnn{#1}{#2}{|}{#3}{|}}
+\def\del@Abs#1#2||#3||{\del_set:nnnnn{#1}{#2}{\|}{#3}{\|}}
+\NewDocumentCommand{\del@mid}{mm}{\peek_charcode_remove:NTF|{\del@Abs{#1}{#2}||}{\del@abs{#1}{#2}|}}
+
+% #1: a prefix if something delimited follows.
+% #2: what to do with #3 if nothing delimited follows.
+% #3: the contents of the brackets following \del directly, or empty if there were no brackets.
+\NewDocumentCommand{\del@test}{mmr[]}{%
+\peek_charcode:NTF\bgroup{\del@brace{#1}{#3}}{%
+\peek_charcode:NTF[{\del@brack{#1}{#3}}{%
+\peek_charcode:NTF({\del@paren{#1}{#3}}{%
+\peek_charcode:NTF<{\del@angle{#1}{#3}}{%
+\peek_charcode_remove:NTF|{\del@mid{#1}{#3}}{%
+#2[#3]%
+}}}}}%
+}
+\cs_new:Nn\del_error:{\PackageError{MathTools}{No~arguments~for~\protect\del!}{}}
+% If there is a bracket, we need to see if there is another valid delimiter after it
+% (then the contents are options) or not (then those are the contents of the bracket delimiters).
+\NewDocumentCommand{\del}{}{%
+  \peek_charcode:NTF[{%
+    \del@test{}{\del@brack{}{}}%
+  }{%
+    \del@test{}{\del@error}[]%
+  }%
+}
+
+% A version in which the delimiters are given explicitly
+\NewDocumentCommand{\Del}{mmm}{\left#1 #3 \right#2}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Other delimiters.                                                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NewDocumentCommand{\ceil}{m}{\left\lceil #1 \right\rceil}
+\NewDocumentCommand{\floor}{m}{\left\lfloor #1 \right\rfloor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \fun and its helpers.                                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\keys_define:nn{fun_keys}{
+  fun/code.cs_set:Np = \fun_transform_command:n#1,
+  fun/code.initial:n = {#1},
+}
+
+% The \fun command, which makes use of the \del command for properly typeset functions.
+% The options given as an optional argument to \fun are used for both \fun itself and \del.
+\NewDocumentCommand{\fun@opts}{r[]m}{%
+  \del@test{\keys_set_known:nn{fun_keys}{#1}\fun_transform_command:n{#2}}{\del@error}[#1]%
+}
+\NewDocumentCommand{\fun}{}{\peek_charcode:NTF[{\fun@opts}{\fun@opts[]}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \NewFun and its helpers.                                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\cs_new:Nn\subscr:nn{#1\c_math_subscript_token{#2}}
+\cs_new:Nn\supscr:nn{#1\c_math_superscript_token{#2}}
+\cs_new:Nn\subsupscr:nnn{#1\c_math_subscript_token{#2}\c_math_superscript_token{#3}}
+\cs_new:Nn\supsubscr:nnn{#1\c_math_superscript_token{#2}\c_math_subscript_token{#3}}
+
+\tl_new:N\g_new_fun_name_tl
+\keys_define:nn{new_fun_keys}{
+  newfun/codefunnone.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_none:n}{#1}},
+  newfun/codefunsub.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sub:n}{#1}},
+  newfun/codefunsup.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sup:n}{#1}},
+  newfun/codefunsubsup.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sub_sup:n}{#1}},
+  newfun/codesymnone.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_none:n}{#1}},
+  newfun/codesymsub.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sub:n}{#1}},
+  newfun/codesymsup.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sup:n}{#1}},
+  newfun/codesymsubsup.code:n = {\cs_gset:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sub_sup:n}{#1}},
+}
+\cs_new:Nn\new_fun_options:n{%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_none:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sub:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sup:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_fun_sub_sup:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_none:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sub:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sup:n}{##1}%
+  \cs_new:cn{new_fun_\tl_use:N\g_new_fun_name_tl _transform_sym_sub_sup:n}{##1}%
+  \keys_set_known:nn{new_fun_keys}{#1}%
+}
+
+\NewDocumentCommand{\new@fun@bracket@gobbler}{r[]}{}
+
+% Command to create commands for functions.
+% #1: Key-value options.
+% #2: The name of the command.
+% #3: The function symbol.
+\NewDocumentCommand{\NewFun}{O{}mm}{%
+  \begingroup%
+  \tl_set:Nn\g_new_fun_name_tl{#2}%
+  \new_fun_options:n{#1}%
+  \endgroup%
+  \subsup_prepare:nn{#2}{#1}%
+  \cs_set:cn{subsup_#2_around_none_code:n}{%
+    \del@test%
+      {\use:c{new_fun_#2_transform_fun_none:n}{##1}}%
+      {\use:c{new_fun_#2_transform_sym_none:n}{##1}\new@fun@bracket@gobbler}[#1]%
+  }%
+  \cs_set:cn{subsup_#2_around_sub_code:n}{%
+    \del@test%
+      {\use:c{new_fun_#2_transform_fun_sub:n}{##1}}%
+      {\use:c{new_fun_#2_transform_sym_sub:n}{##1}\new@fun@bracket@gobbler}[#1]%
+  }%
+  \cs_set:cn{subsup_#2_around_sup_code:n}{%
+    \del@test%
+      {\use:c{new_fun_#2_transform_fun_sup:n}{##1}}%
+      {\use:c{new_fun_#2_transform_sym_sup:n}{##1}\new@fun@bracket@gobbler}[#1]%
+  }%
+  \cs_set:cn{subsup_#2_around_sub_sup_code:n}{%
+    \del@test%
+      {\use:c{new_fun_#2_transform_fun_sub_sup:n}{##1}}%
+      {\use:c{new_fun_#2_transform_sym_sub_sup:n}{##1}\new@fun@bracket@gobbler}[#1]%
+  }%
+  \subsup_define:nn{#2}{#3}%
+}
+
+\cs_new:Nn\integral_none:nn{#1\,\diff{#2}}
+\cs_new:Nn\integral_sub:nnn{\int\c_math_subscript_token{#1}#2\,\diff{#3}}
+\cs_new:Nn\integral_sup:nnn{\int\c_math_superscript_token{#1}#2\,\diff{#3}}
+\cs_new:Nn\integral_sub:nnnn{\int\c_math_subscript_token{#1}\c_math_superscript_token{#2}#3\,\diff{#4}}
+\NewDocumentCommand{\Integral}{}{%
+  \sub_sup_helper:NNNN\integral_none:nn\integral_sub:nnn\integral_sup:nnn\integral_sub:nnnn%
+}
+
+\NewDocumentCommand{\mathllapinternal}{mm}{\llap{$\m@th #1{#2}$}}
+\NewDocumentCommand{\mathrlapinternal}{mm}{\rlap{$\m@th #1{#2}$}}
+\NewDocumentCommand{\mathclapinternal}{mm}{\clap{$\m@th #1{#2}$}}
+\NewDocumentCommand{\mathllap}{}{\mathpalette\mathllapinternal}
+\NewDocumentCommand{\mathrlap}{}{\mathpalette\mathrlapinternal}
+\RenewDocumentCommand{\mathclap}{}{\mathpalette\mathclapinternal}
+
+% Used for function definitions of the form f: X -> Y [: x |-> f(x)]
+% The part in brackets represent the two optional arguments at the end and is only applied if BOTH are present (if one isn't there, it's ignored)
+% f, X, Y, x, f(x) represent the 1st, 2nd, 3rd, 4th, and 5th arguments respectively.
+\NewDocumentCommand{\FunDef}{m m m o o}{%
+  #1 : #2 \to #3 \IfValueT{#4}{\IfValueT{#5}{: #4 \mapsto #5}}%
+}
+
+% Arrows
+\NewDocumentCommand{\leadstor}{}{\rightsquigarrow}
+\NewDocumentCommand{\aequi}{}{\Leftrightarrow}
+\NewDocumentCommand{\implr}{}{\Rightarrow}
+\NewDocumentCommand{\impll}{}{\Leftarrow}
+\NewDocumentCommand{\contradiction}{}{\downzigzagarrow}
+
+\NewDocumentCommand{\transposed}{m}{#1^{\top}}
+\NewDocumentCommand{\factorial}{m}{#1!}
+
+% Differential
+\NewDocumentCommand{\diff}{m}{\symrm{d}#1}
+
+\NewDocumentCommand{\funrestrict}{mm}{{\left.#1\right|\!{\raisebox{-.5ex}[0pt][0pt]{$\scriptstyle #2$}}}}
+
+% A number of common function symbols.
+\NewFun{minF}{\min}
+\NewFun{maxF}{\max}
+\NewFun{argmaxF}{\argmax}
+\NewFun{argminF}{\argmin}
+\NewFun{divF}{\operatorname{div}}
+\NewFun{expF}{\exp}
+\NewFun{logF}{\log}
+\NewFun{sinF}{\sin}
+\NewFun{cosF}{\cos}
+\NewFun{arctanF}{\arctan}
+\NewFun{powerset}{\symcal{P}}
