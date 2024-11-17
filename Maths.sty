@@ -369,7 +369,11 @@
 \NewDocumentCommand{\factorial}{m}{#1!}
 
 % Differential
-\NewDocumentCommand{\diff}{m}{\symrm{d}#1}
+\cs_if_exist:NTF\symrm{
+  \NewDocumentCommand{\diff}{m}{\symrm{d}#1}
+}{
+  \NewDocumentCommand{\diff}{m}{\mathrm{d}#1}
+}
 
 \NewDocumentCommand{\funrestrict}{mm}{{\left.#1\right|\!{\raisebox{-.5ex}[0pt][0pt]{$\scriptstyle #2$}}}}
 
@@ -384,4 +388,8 @@
 \NewFun{sinF}{\sin}
 \NewFun{cosF}{\cos}
 \NewFun{arctanF}{\arctan}
-\NewFun{powerset}{\symcal{P}}
+\cs_if_exist:NTF\symrm{
+  \NewFun{powerset}{\symcal{P}}
+}{
+  \NewFun{powerset}{\mathcal{P}}
+}
