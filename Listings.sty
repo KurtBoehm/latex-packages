@@ -1,5 +1,5 @@
 \RequirePackage{l3keys2e}
-\ProvidesExplPackage{packages/Listings}{2024-11-14}{1.0}{Language definitions for listings}
+\ProvidesExplPackage{packages/Listings}{2024-11-19}{1.0.1}{Language definitions for listings}
 
 \cs_new:Nn\l_listingsdef_quasitt:{\cs_if_exist:NTF\codefamily{\codefamily}{\ttfamily}}
 
@@ -215,3 +215,16 @@
 \lstnewenvironment{IntelAsmEnv}{\lstset{language=intelasm,style=intelasmsty}}{}
 \lstnewenvironment{IntelAsmEnvCols}{\scriptsize\lstset{language=intelasm,style=intelasmsty,multicols=2}}{}
 \lstnewenvironment{CppEnv}[1][]{\lstset{language=cpp,style=cppsty,#1}}{}
+
+\lstdefinestyle{abstractalgsty}{
+  language=cpp,
+  style=cppsty,
+  morekeywords=[0]{parallel,process,in},
+}
+\lstdefinestyle{abstractalgstyinline}{
+  language=cpp,
+  style=cppstyinline,
+  morekeywords=[0]{parallel,process,in},
+}
+\NewDocumentCommand{\AbstractAlg}{v}{\lstinline[style=abstractalgstyinline]{#1}}
+\lstnewenvironment{AbstractAlgEnv}[1][]{\lstset{style=abstractalgsty,#1}}{}
