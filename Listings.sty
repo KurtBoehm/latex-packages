@@ -147,6 +147,18 @@
   keywordstyle=[50]{\color{MaterialBlue700}},
   % Macros
   keywordstyle=[60]{\color{MaterialBlue900}},
+  % Decimal integers
+  literate=%
+    *{0}{{{\textcolor{MaterialBlue900}{0}}}}1
+    {1}{{{\textcolor{MaterialBlue900}{1}}}}1
+    {2}{{{\textcolor{MaterialBlue900}{2}}}}1
+    {3}{{{\textcolor{MaterialBlue900}{3}}}}1
+    {4}{{{\textcolor{MaterialBlue900}{4}}}}1
+    {5}{{{\textcolor{MaterialBlue900}{5}}}}1
+    {6}{{{\textcolor{MaterialBlue900}{6}}}}1
+    {7}{{{\textcolor{MaterialBlue900}{7}}}}1
+    {8}{{{\textcolor{MaterialBlue900}{8}}}}1
+    {9}{{{\textcolor{MaterialBlue900}{9}}}}1,
   inputencoding=utf8,
   extendedchars=true,
   breakatwhitespace=true,
@@ -227,4 +239,7 @@
   morekeywords=[0]{parallel,process,in},
 }
 \NewDocumentCommand{\AbstractAlg}{v}{\lstinline[style=abstractalgstyinline]{#1}}
-\lstnewenvironment{AbstractAlgEnv}[1][]{\lstset{style=abstractalgsty,#1}}{}
+\lstnewenvironment{AbstractAlgEnv}[1][]{%
+  \lstset{style=abstractalgsty}%
+  \keys_set:nx{listings_cpp_keys}{\tl_use:N\g_listings_cpp_tl,#1}%
+}{}
