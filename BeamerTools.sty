@@ -1,0 +1,55 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/BeamerTools}{2024-11-05}{1.0}{Beamer tools}
+
+\dim_new:N\l_aos_wd_dim
+\dim_new:N\l_aos_ht_dim
+\dim_new:N\l_aos_dp_dim
+\dim_new:N\g_aos_wd_dim
+\dim_new:N\g_aos_ht_dim
+\dim_new:N\g_aos_dp_dim
+
+% Update \g_aos_wd_dim, \g_aos_ht_dim, and \g_aos_dp_dim based on the contents in \l_tmpb_clist
+\cs_new:Nn\beamertools_altmeasure_impl:{%
+  \clist_if_empty:NF\l_tmpb_clist{%
+    \clist_pop:NN\l_tmpb_clist\l_tmpb_tl%
+    \hbox_set:Nn\l_tmpa_box{\l_tmpb_tl}%
+    \dim_set:Nn\l_aos_wd_dim{\box_wd:N\l_tmpa_box}%
+    \dim_set:Nn\l_aos_ht_dim{\box_ht:N\l_tmpa_box}%
+    \dim_set:Nn\l_aos_dp_dim{\box_dp:N\l_tmpa_box}%
+    \begingroup\beamertools_altmeasure_impl:\endgroup%
+    \dim_gset:Nn\g_aos_wd_dim{\dim_max:nn{\l_aos_wd_dim}{\g_aos_wd_dim}}%
+    \dim_gset:Nn\g_aos_ht_dim{\dim_max:nn{\l_aos_ht_dim}{\g_aos_ht_dim}}%
+    \dim_gset:Nn\g_aos_dp_dim{\dim_max:nn{\l_aos_dp_dim}{\g_aos_dp_dim}}%
+  }%
+}
+
+% Measure the contents from #1 and leave the measurements in the stream
+\NewDocumentCommand{\AltMeasure}{m}{%
+  \clist_set:Nn\l_tmpb_clist{#1}%
+  \begingroup\beamertools_altmeasure_impl:\endgroup%
+  [\dim_use:N\g_aos_wd_dim,\dim_use:N\g_aos_ht_dim,\dim_use:N\g_aos_dp_dim]%
+}
+
+% Wrap the contents in \l_tmpb_clist in \alt using the overlay specifications in \l_tmpa_clist
+\cs_new:Nn\beamertools_altonslide_impl:{%
+  \clist_if_empty:NTF\l_tmpa_clist{
+    \clist_pop:NN\l_tmpb_clist\l_tmpb_tl%
+    \l_tmpb_tl
+  }{%
+    \clist_pop:NN\l_tmpa_clist\l_tmpa_tl%
+    \clist_pop:NN\l_tmpb_clist\l_tmpb_tl%
+    \alt<\l_tmpa_tl>\l_tmpb_tl\beamertools_altonslide_impl:{}%
+  }%
+}
+
+% Provide \onslide-like functionality with more than two alternatives
+% #1: The overlay specification for each entry of #2 in descending order of relevance
+% #2: The contents
+\NewDocumentCommand{\AltOnSlide}{m m}{%
+  \clist_set:Nn\l_tmpa_clist{#1}%
+  \clist_set:Nn\l_tmpb_clist{#2}%
+  \begingroup\beamertools_altmeasure_impl:\endgroup%
+  \raisebox{0pt}[\g_aos_ht_dim][\g_aos_dp_dim]{%
+    \makebox[\g_aos_wd_dim][c]{\beamertools_altonslide_impl:}%
+  }%
+}
