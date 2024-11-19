@@ -1,0 +1,217 @@
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{packages/Listings}{2024-11-14}{1.0}{Language definitions for listings}
+
+\cs_new:Nn\l_listingsdef_quasitt:{\cs_if_exist:NTF\codefamily{\codefamily}{\ttfamily}}
+
+\RequirePackage{listings}
+\RequirePackage{xcolor-material}
+
+\lstdefinelanguage{intelasm}{
+  morekeywords={Z},
+  morekeywords=[2]{
+    AH, AL, AX,   EAX,  RAX,
+    BH, BL, BX,   EBX,  RBX,
+    CH, CL, CX,   ECX,  RCX,
+    DH, DL, DX,   EDX,  RDX,
+    SIL,    SIX,  ESIX, RSI,
+    DIL,    DIX,  EDIX, RDI,
+    BPL,    BPX,  EBPX, RBP,
+    SPL,    SPX,  ESPX, RSP,
+    R8B,    R8W,  R8D,  R8,
+    R9B,    R9W,  R9D,  R9,
+    R10B,   R10W, R10D, R10,
+    R11B,   R11W, R11D, R11,
+    R12B,   R12W, R12D, R12,
+    R13B,   R13W, R13D, R13,
+    R14B,   R14W, R14D, R14,
+    R15B,   R15W, R15D, R15,
+    K0, K1, K2, K3, K4, K5, K6, K7,
+    xmm0,  xmm1,  xmm2,  xmm3,  xmm4,  xmm5,  xmm6,  xmm7,
+    xmm8,  xmm9,  xmm10, xmm11, xmm12, xmm13, xmm14, xmm15,
+    xmm16, xmm17, xmm18, xmm19, xmm20, xmm21, xmm22, xmm23,
+    xmm24, xmm25, xmm26, xmm27, xmm28, xmm29, xmm30, xmm31,
+    ymm0,  ymm1,  ymm2,  ymm3,  ymm4,  ymm5,  ymm6,  ymm7,
+    ymm8,  ymm9,  ymm10, ymm11, ymm12, ymm13, ymm14, ymm15,
+    ymm16, ymm17, ymm18, ymm19, ymm20, ymm21, ymm22, ymm23,
+    ymm24, ymm25, ymm26, ymm27, ymm28, ymm29, ymm30, ymm31,
+    zmm0,  zmm1,  zmm2,  zmm3,  zmm4,  zmm5,  zmm6,  zmm7,
+    zmm8,  zmm9,  zmm10, zmm11, zmm12, zmm13, zmm14, zmm15,
+    zmm16, zmm17, zmm18, zmm19, zmm20, zmm21, zmm22, zmm23,
+    zmm24, zmm25, zmm26, zmm27, zmm28, zmm29, zmm30, zmm31,
+  },
+  morekeywords=[3]{
+    ADD, AND, CMOVNE, CMP, INC, JBE, JE, JMP, JNE, JZ, KMOVW,
+    LEA, MOV, RET, SAL, SHR, SUB, TEST, VADDPD, VADDPS, VADDSD,
+    VEXTRACTF64X2, VEXTRACTI64X2, VFMADD231PD, VFMADD231SD,
+    VMOVDQA, VMOVQ, VMOVSD, VMOVUPD, VMULPD, VPADDQ, VPSRLDQ,
+    VPXOR, VUNPCKHPD, VXORPD, VZEROUPPER, XOR, ZEROUPPER,
+  },
+  morekeywords=[4]{PTR, BYTE, WORD, DWORD, QWORD, XMMWORD, YMMWORD, ZMMWORD},
+  otherkeywords={1to2, 1to4, 1to8, 1to16, .quad},
+  sensitive=false,
+  morecomment=[l]{\#},
+  morestring=[b]",
+}
+
+\lstdefinelanguage{cpp}{
+  % Assorted keywords
+  morekeywords=[0]{
+    alignas, alignof, and, and_eq, asm, bitand, bitor, break,
+    case, catch, class, compl, concept, const, consteval,
+    constexpr, constinit, const_cast, continue, co_await,
+    co_return, co_yield, decltype, default, delete, do,
+    dynamic_cast, else, enum, explicit, export, extern, false,
+    for, friend, goto, if, inline, mutable, namespace, new,
+    noexcept, not, not_eq, nullptr, or, or_eq, private,
+    protected, public, register, reinterpret_cast, requires,
+    return, sizeof, static, static_assert, static_cast, struct,
+    switch, template, this, thread_local, throw, true, try,
+    typedef, typeid, typename, union, using, virtual, volatile,
+    while, xor, xor_eq
+  },
+  % Namespaces (not actually keywords)
+  morekeywords=[10]{std},
+  % Types (keywords)
+  morekeywords=[21]{
+    auto, bool, char, char8_t, char16_t, char32_t, double,
+    float, int, long, short, signed, unsigned, void, wchar_t,
+  },
+  % Types (non-keywords)
+  morekeywords=[20]{
+    int8_t,  int16_t,  int32_t,  int64_t,
+    uint8_t, uint16_t, uint32_t, uint64_t,
+    size_t,
+  },
+  % Function keywords
+  morekeywords=[31]{operator},
+  sensitive,%
+  morecomment=[s]{/*}{*/},
+  morecomment=[l]//,
+  morestring=[b]",
+  morestring=[b]',
+  moredelim=*[directive]\#,
+  moredirectives={
+    define, elif, else, endif, error, if, ifdef, ifndef, line,
+    include, pragma, undef, warning
+  }
+}[keywords, comments, strings, directives]%
+
+\lstdefinestyle{basesty}{
+  basicstyle=\ttfamily,
+  commentstyle={\it\ttfamily\color{gray}},
+}
+\lstdefinestyle{basestyinline}{
+  basicstyle=\l_listingsdef_quasitt:,
+  commentstyle={\it\l_listingsdef_quasitt:\color{gray}},
+}
+
+\lstdefinestyle{intelasmsty}{
+  basicstyle=\ttfamily,
+  commentstyle={\it\ttfamily\color{gray}},
+  % stringstyle=\ttfamily,
+  keywordstyle={\color{MaterialPurple}},
+  keywordstyle=[2]{\color{GoogleGreen}},
+  keywordstyle=[3]{\color{GoogleRed}},
+  keywordstyle=[4]{\color{GoogleBlue}},
+  inputencoding=utf8,
+  extendedchars=true,
+  breakatwhitespace=true,
+  breaklines=true,
+  keepspaces=true,
+}
+\lstdefinestyle{cppsty}{
+  basicstyle=\ttfamily,
+  commentstyle={\it\ttfamily\color{gray}},
+  % stringstyle=\ttfamily,
+  % Assorted Keywords
+  keywordstyle=[0]{\color{MaterialRed}\textbf},
+  % Namespaces
+  keywordstyle=[10]{\color{MaterialPink}},
+  % Types
+  keywordstyle=[20]{\color{MaterialDeepPurple}},
+  % Keyword Types
+  keywordstyle=[21]{\color{MaterialDeepPurple}\textbf},
+  % Functions
+  keywordstyle=[30]{\color{GoogleGreen!50!MaterialGreen800}},
+  % Function Keywords
+  keywordstyle=[31]{\color{GoogleGreen!50!MaterialGreen800}\textbf},
+  % Member Functions
+  keywordstyle=[32]{\color{GoogleGreen!50!MaterialGreen800}\textit},
+  % Variables
+  keywordstyle=[40]{\color{MaterialOrange800}},
+  % Member Variables
+  keywordstyle=[41]{\color{MaterialOrange800}\textit},
+  % Arguments
+  keywordstyle=[42]{\color{MaterialOrange800}\textbf},
+  % Concepts
+  keywordstyle=[50]{\color{MaterialBlue700}},
+  % Macros
+  keywordstyle=[60]{\color{MaterialBlue900}},
+  inputencoding=utf8,
+  extendedchars=true,
+  breakatwhitespace=true,
+  breaklines=true,
+  keepspaces=true,
+}
+
+\lstdefinestyle{intelasmstyinline}{
+  style=intelasmsty,
+  basicstyle=\l_listingsdef_quasitt:,
+  commentstyle={\it\l_listingsdef_quasitt:\color{gray}}
+}
+\lstdefinestyle{cppstyinline}{
+  style=cppsty,
+  basicstyle=\l_listingsdef_quasitt:,
+  commentstyle={\it\l_listingsdef_quasitt:\color{gray}}
+}
+
+\NewDocumentCommand{\Code}{v}{\lstinline[style=basestyinline]{#1}}
+\NewDocumentCommand{\IntelAsm}{v}{\lstinline[language=intelasm,style=intelasmstyinline]{#1}}
+\NewDocumentCommand{\IntelAsmSafe}{m}{\lstinline[language=intelasm,style=intelasmstyinline]{#1}}
+
+\tl_new:N\g_listings_cpp_tl
+\keys_define:nn{listings_keys}{
+  CppOpts.code:n = {\tl_put_right:Nn\g_listings_cpp_tl{#1}},
+  CppOpts.value_required:n = true,
+}
+\ProcessKeysOptions{listings_keys}
+
+\keys_define:nn{listings_cpp_keys}{
+  Args.code:n = {\exp_args:Nx\lstset{morekeywords=[42]{#1}}},
+  Args.value_required:n = true,
+  Concepts.code:n = {\exp_args:Nx\lstset{morekeywords=[50]{#1}}},
+  Concepts.value_required:n = true,
+  Funs.code:n = {\exp_args:Nx\lstset{morekeywords=[30]{#1}}},
+  Funs.value_required:n = true,
+  Macros.code:n = {\exp_args:Nx\lstset{morekeywords=[60]{#1}}},
+  Macros.value_required:n = true,
+  MemberFuns.code:n = {\exp_args:Nx\lstset{morekeywords=[32]{#1}}},
+  MemberFuns.value_required:n = true,
+  MemberVars.code:n = {\exp_args:Nx\lstset{morekeywords=[41]{#1}}},
+  MemberVars.value_required:n = true,
+  Namespaces.code:n = {\exp_args:Nx\lstset{morekeywords=[10]{#1}}},
+  Namespaces.value_required:n = true,
+  Types.code:n = {\exp_args:Nx\lstset{morekeywords=[20]{#1}}},
+  Types.value_required:n = true,
+  Vars.code:n = {\exp_args:Nx\lstset{morekeywords=[40]{#1}}},
+  Vars.value_required:n = true,
+}
+\NewDocumentCommand{\Cpp}{O{}v}{%
+  \begingroup%
+  \lstset{language=cpp,style=cppstyinline}%
+  \keys_set:nx{listings_cpp_keys}{\tl_use:N\g_listings_cpp_tl,#1}%
+  \lstinline{#2}%
+  \endgroup%
+}
+\NewDocumentCommand{\CppSafe}{O{}m}{%
+  \begingroup%
+  \lstset{language=cpp,style=cppstyinline}%
+  \keys_set:nx{listings_cpp_keys}{\tl_use:N\g_listings_cpp_tl,#1}%
+  \lstinline{#2}%
+  \endgroup%
+}
+
+\lstnewenvironment{CodeEnv}[1][]{\lstset{style=basesty,#1}}{}
+\lstnewenvironment{IntelAsmEnv}{\lstset{language=intelasm,style=intelasmsty}}{}
+\lstnewenvironment{IntelAsmEnvCols}{\scriptsize\lstset{language=intelasm,style=intelasmsty,multicols=2}}{}
+\lstnewenvironment{CppEnv}[1][]{\lstset{language=cpp,style=cppsty,#1}}{}
