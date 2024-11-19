@@ -1,0 +1,34 @@
+\mode<presentation>
+
+% progressbar=frametitle
+\usetheme{moloch}
+
+\makeatletter
+\setlength{\moloch@titleseparator@linewidth}{1pt}
+\setlength{\moloch@progressonsectionpage@linewidth}{1pt}
+\setlength{\moloch@progressinheadfoot@linewidth}{1pt}
+\makeatother
+\setbeamertemplate{frametitle continuation}{}
+\setbeamerfont{footline}{size=\addfontfeature{Numbers=Monospaced}}
+
+%\setbeamertemplate{itemize items}[circle]
+
+% color settings
+\definecolor{TUCgreen}{RGB}{0,140,79}
+\definecolor{TUCgrey1}{RGB}{128,128,128}
+\definecolor{TUCgrey2}{RGB}{230,230,230}
+\definecolor{TUCred}{RGB}{140,28,0}
+\setbeamercolor{normal text}{fg=black,bg=white}
+\setbeamercolor{alerted text}{fg=TUCred}
+\setbeamercolor{example text}{fg=TUCgreen}
+% inverted: fg = TUCgreen, bg = normal text.bg
+\setbeamercolor{palette primary}{use = normal text, fg = white, bg = TUCgreen}
+\setbeamercolor{title separator}{fg=TUCgreen}
+\setbeamercolor{progress bar}{fg=TUCgreen}
+
+% font settings
+\usefonttheme{professionalfonts}
+\setbeamerfont*{itemize/enumerate subbody}{parent=itemize/enumerate body}
+\setbeamerfont*{itemize/enumerate subsubbody}{parent=itemize/enumerate body}
+
+\mode<all>

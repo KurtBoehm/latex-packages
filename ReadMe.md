@@ -6,6 +6,7 @@ This repository is intended to be used as a git subproject with the name `packag
 
 The packages are:
 
+- `BeamerClausthal`: My Clausthal beamer theme, which is simply `moloch` with some customizations. Since `beamer` does not support themes in subfolders, no attempt has been made to follow its naming conventions.
 - `Env`: Get environment variable. Primarily designed to get the build directory.
 - `Fonts`: Set up a variety fonts. The fonts are either taken from packages included in TeX Live or assumed to be in a `fonts` folder within the same parent folder as `packages`.
 - `Listings`: Extended language definitions for `listings`.
