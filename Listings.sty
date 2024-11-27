@@ -238,7 +238,13 @@
   style=cppstyinline,
   morekeywords=[0]{parallel,process,in},
 }
-\NewDocumentCommand{\AbstractAlg}{v}{\lstinline[style=abstractalgstyinline]{#1}}
+\NewDocumentCommand{\AbstractAlg}{O{}v}{%
+  \begingroup%
+  \lstset{style=abstractalgstyinline}%
+  \keys_set:nx{listings_cpp_keys}{\tl_use:N\g_listings_cpp_tl,#1}%
+  \lstinline{#2}%
+  \endgroup%
+}
 \lstnewenvironment{AbstractAlgEnv}[1][]{%
   \lstset{style=abstractalgsty}%
   \keys_set:nx{listings_cpp_keys}{\tl_use:N\g_listings_cpp_tl,#1}%
