@@ -54,22 +54,26 @@
 }
 
 \lstdefinelanguage{cpp}{
-  % Assorted keywords
+  % Assorted Keywords
   morekeywords=[0]{
     alignas, alignof, and, and_eq, asm, bitand, bitor, break,
     case, catch, class, compl, concept, const, consteval,
     constexpr, constinit, const_cast, continue, co_await,
     co_return, co_yield, decltype, default, delete, do,
-    dynamic_cast, else, enum, explicit, export, extern, false,
+    dynamic_cast, else, enum, explicit, export, extern,
     for, friend, goto, if, inline, mutable, namespace, new,
-    noexcept, not, not_eq, nullptr, or, or_eq, private,
+    noexcept, not, not_eq, or, or_eq, private,
     protected, public, register, reinterpret_cast, requires,
     return, sizeof, static, static_assert, static_cast, struct,
-    switch, template, this, thread_local, throw, true, try,
+    switch, template, this, thread_local, throw, try,
     typedef, typeid, typename, union, using, virtual, volatile,
     while, xor, xor_eq
   },
-  % Namespaces (not actually keywords)
+  % Constant Keywords
+  morekeywords=[1]{
+    false, nullptr, true
+  },
+  % Namespaces (non-keywords)
   morekeywords=[10]{std},
   % Types (keywords)
   morekeywords=[21]{
@@ -125,6 +129,8 @@
   % stringstyle=\ttfamily,
   % Assorted Keywords
   keywordstyle=[0]{\color{MaterialRed}\textbf},
+  % Constant Keywords
+  keywordstyle=[1]{\color{MaterialBlue900}\textbf},
   % Namespaces
   keywordstyle=[10]{\color{MaterialPink}},
   % Types
@@ -207,6 +213,8 @@
   Types.value_required:n = true,
   Vars.code:n = {\exp_args:Nx\lstset{morekeywords=[40]{#1}}},
   Vars.value_required:n = true,
+  EscapeInside.code:n = {\exp_args:Nx\lstset{escapeinside={#1}}},
+  EscapeInside.value_required:n = true,
 }
 \NewDocumentCommand{\Cpp}{O{}v}{%
   \begingroup%
