@@ -170,7 +170,7 @@
   \str_if_eq:eeF{#4}{\semco_tmp_name:}{\sys_shell_now:e{mv ~ "#4" ~ \semco_tmp_name:}}%
   \int_gincr:N\g_semco_tmp_cntr%
 }
-\NewDocumentCommand{\@semco@store@mini@cache}{m m m}{%
+\NewDocumentCommand{\@semco@store@mini@cache}{m +m m}{%
   \semco_tl_to_str:Nn\l_tmpa_str{#2}%
   \sys_shell_now:e{echo ~ '\string\@semco@store@mini@cache{#1}{\l_tmpa_str}{\semco_tmp_name:}' ~ >> ~ .semco/.cache.tmp}%
   \prop_gput:Nee\g_semco_mini_prop{{#1}{\l_tmpa_str}}{\semco_tmp_name:}%
