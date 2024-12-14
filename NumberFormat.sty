@@ -1,0 +1,96 @@
+\RequirePackage{expl3}
+\ProvidesExplPackage{packages/NumberFormat}{2024-12-14}{1.0}{Number Formatting}
+\RequirePackage{xparse}
+
+% fillmap: A single-argument command; what is printed as filler; \hphantom by default
+% prefill: Whether to add filler character before the sign (if printed)
+% postfill: Whether to add filler character after the sign (if printed)
+\keys_define:nn{number_format_keys}{
+  fillmap.cs_set:Np = \number_format_fill_map:n#1,
+  fillmap.initial:n = {\hphantom{#1}},
+  fillmap.value_required:n = true,
+  prefill.bool_set:N = \l_number_format_pre_fill_bool,
+  prefill.initial:n = true,
+  prefill.default:n = true,
+  postfill.bool_set_inverse:N = \l_number_format_pre_fill_bool,
+  postfill.default:n = true,
+}
+\cs_new:Nn\number_format_read_keys:n{%
+  \keys_set_known:nn{number_format_keys}{#1}%
+}
+
+% Whether the format starts with a minus
+\bool_new:N\l_fdec_sizes_sign_bool
+% Whether the number starts with a minus
+\bool_new:N\l_fdec_num_sign_bool
+% Whether the number contains a dot
+\bool_new:N\l_fdec_input_dot_bool
+
+% Print #1 zeros
+\cs_new:Nn\number_format_print_zeroes:n{%
+  \int_set:Nn\l_tmpa_int{#1}%
+  \int_while_do:nn{\l_tmpa_int > 0}{%
+    \number_format_fill_map:n{0}%
+    \int_decr:N\l_tmpa_int%
+  }%
+}
+% Print a Unicode minus if the number starts with one
+% If not, print a phantom Unicode minus if specified by the format
+\cs_new:Nn\number_format_print_minus:{%
+  \bool_if:nT{\l_fdec_num_sign_bool}{\char"2212}%
+  \bool_if:nT{\l_fdec_sizes_sign_bool && !\l_fdec_num_sign_bool}{%
+    \hphantom{\char"2212}%
+  }%
+}
+
+% #1: Options; #2: The format (e.g. 2.1 or 3); #3: the number to format
+\NewDocumentCommand{\fdec}{O{}mm}{
+  \begingroup%
+  \number_format_read_keys:n{#1}%
+  \addfontfeatures{Numbers=Monospaced}%
+  % Set the integers to zero
+  \int_zero_new:N\l_fdec_sizea_int\int_zero_new:N\l_fdec_sizeb_int%
+  \int_zero_new:N\l_fdec_numa_int\int_zero_new:N\l_fdec_numb_int%
+  % Determine whether #2/#3 has a sign
+  \tl_set:Nx\l_tmpb_tl{-}%
+  \tl_set:Nx\l_tmpa_tl{\tl_head:n{#2}}%
+  \bool_set:Nn\l_fdec_sizes_sign_bool{\tl_if_eq_p:NN\l_tmpa_tl\l_tmpb_tl}%
+  \tl_set:Nx\l_tmpa_tl{\tl_head:n{#3}}%
+  \bool_set:Nn\l_fdec_num_sign_bool{\tl_if_eq_p:NN\l_tmpa_tl\l_tmpb_tl}%
+  % Get the integer and the fraction part of #2
+  \seq_set_split:Nnn\l_tmpa_seq{.}{#2}%
+  \int_set:Nn\l_fdec_sizea_int{\int_abs:n{\seq_item:Nn\l_tmpa_seq{1}}}%
+  \int_set:Nn\l_fdec_sizeb_int{%
+    \int_compare:nNnTF{\seq_count:N\l_tmpa_seq}>{1}{\seq_item:Nn\l_tmpa_seq{2}}{0}%
+  }%
+  % Split #3
+  \seq_set_split:Nnn\l_tmpb_seq{.}{#3}%
+  % Print the integer part
+  \tl_set:Nx\l_tmpa_tl{\seq_item:Nn\l_tmpb_seq{1}}%
+  \int_set:Nn\l_fdec_numa_int{\tl_count:N\l_tmpa_tl}%
+  \bool_if:NT\l_fdec_num_sign_bool{\int_decr:N\l_fdec_numa_int}%
+  \int_set_eq:NN\l_tmpa_int\l_fdec_sizea_int%
+  % Always print minus, add a phantom minus if necessary
+  \bool_if:NTF\l_number_format_pre_fill_bool{%
+    \number_format_print_zeroes:n{\l_tmpa_int - \l_fdec_numa_int}%
+    \number_format_print_minus:{}%
+  }{%
+    \number_format_print_minus:{}%
+    \number_format_print_zeroes:n{\l_tmpa_int - \l_fdec_numa_int}%
+  }%
+  \int_set:Nn\l_tmpa_int{\int_abs:n{\l_tmpa_tl}}%
+  \int_to_arabic:n{\l_tmpa_int}%
+  %
+  \int_compare:nNnT{\seq_count:N\l_tmpa_seq}>{1}{%
+    \bool_set:Nn\l_fdec_input_dot_bool{\int_compare_p:nNn{\seq_count:N\l_tmpb_seq} > {1}}
+    \tl_set:Nx\l_tmpa_tl{\bool_if:NT\l_fdec_input_dot_bool{\seq_item:Nn\l_tmpb_seq{2}}}%
+    \int_set:Nn\l_fdec_numb_int{\tl_count:N\l_tmpa_tl}%
+    %
+    \bool_if:NTF\l_fdec_input_dot_bool{.}{\number_format_fill_map:n{.}}%
+    \tl_use:N\l_tmpa_tl%
+    %
+    \int_set_eq:NN\l_tmpa_int\l_fdec_sizeb_int%
+    \number_format_print_zeroes:n{\l_tmpa_int - \l_fdec_numb_int}%
+  }%
+  \endgroup
+}
