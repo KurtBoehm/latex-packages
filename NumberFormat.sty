@@ -1,6 +1,5 @@
 \RequirePackage{expl3}
 \ProvidesExplPackage{packages/NumberFormat}{2024-12-14}{1.0}{Number Formatting}
-\RequirePackage{xparse}
 
 % fillmap: A single-argument command; what is printed as filler; \hphantom by default
 % prefill: Whether to add filler character before the sign (if printed)
@@ -47,7 +46,9 @@
 \NewDocumentCommand{\fdec}{O{}mm}{
   \begingroup%
   \number_format_read_keys:n{#1}%
-  \addfontfeatures{Numbers=Monospaced}%
+  \bool_if:nT{\sys_if_engine_luatex_p: || \sys_if_engine_xetex_p:}{%
+    \addfontfeatures{Numbers=Monospaced}%
+  }%
   % Set the integers to zero
   \int_zero_new:N\l_fdec_sizea_int\int_zero_new:N\l_fdec_sizeb_int%
   \int_zero_new:N\l_fdec_numa_int\int_zero_new:N\l_fdec_numb_int%
