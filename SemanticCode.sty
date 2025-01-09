@@ -165,7 +165,7 @@
 
 \NewDocumentCommand{\@semco@store@part@cache}{o m m m}{%
   \semco_tl_to_str:Nn\l_tmpa_str{#2}%
-  \sys_shell_now:e{echo ~ '\string\@semco@store@part@cache\IfValueT{#1}{{#1}}{\l_tmpa_str}{#3}{\semco_tmp_name:}' ~ >> ~ .semco/.cache.tmp}%
+  \sys_shell_now:e{echo ~ '\string\@semco@store@part@cache\IfValueT{#1}{[#1]}{\l_tmpa_str}{#3}{\semco_tmp_name:}' ~ >> ~ .semco/.cache.tmp}%
   \prop_gput:Nee\g_semco_part_prop{{#1}{\l_tmpa_str}{#3}}{\semco_tmp_name:}%
   \str_if_eq:eeF{#4}{\semco_tmp_name:}{\sys_shell_now:e{mv ~ "#4" ~ \semco_tmp_name:}}%
   \int_gincr:N\g_semco_tmp_cntr%
@@ -221,7 +221,7 @@
   \sys_shell_now:e{.semco/venv/bin/pysemco_tex ~ texify_partial ~ \IfValueT{#1}{--index ~ #1} ~ ".semco/#2.json" ~ "#3" ~ #4}%
   \prop_gput:Nxx\g_semco_part_prop{{#1}{#2}{#3}}{#4}%
   \file_input:n{#4}%
-  \sys_shell_now:e{echo ~ '\string\@semco@store@part@cache\IfValueT{#1}{{#1}}{#2}{#3}{#4}' ~ >> ~ .semco/.cache}%
+  \sys_shell_now:e{echo ~ '\string\@semco@store@part@cache\IfValueT{#1}{[#1]}{#2}{#3}{#4}' ~ >> ~ .semco/.cache}%
   \int_gincr:N\g_semco_tmp_cntr%
 }
 % #1: index of occurrence
