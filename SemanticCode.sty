@@ -194,6 +194,7 @@
 }{\semco_venv_init:}
 
 \sys_shell_now:n{echo ~ "*" ~ > ~ .semco/.gitignore}
+\sys_shell_now:n{echo ~ '{"If":{"PathMatch":[".*\\.cc",".*\\.cpp",".*\\.hh",".*\\.hpp"]},"CompileFlags":{"Add":["-std=c++23"]}}' ~ > ~ .semco/.clangd}
 \sys_shell_now:n{touch ~ .semco/.cache ~ .semco/.cache.tmp}
 
 \ExplSyntaxOff
