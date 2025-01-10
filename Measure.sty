@@ -7,25 +7,19 @@
 \dim_new:N\g_measure_wd_dim
 \dim_new:N\g_measure_ht_dim
 \dim_new:N\g_measure_dp_dim
+\clist_new:N\l_measure_clist
 
-% Update \g_measure_wd_dim, \g_measure_ht_dim, and \g_measure_dp_dim based on the contents in \l_tmpb_clist
+% Update \g_measure_wd_dim, \g_measure_ht_dim, and \g_measure_dp_dim based on the contents in \l_measure_clist
 \cs_new:Nn\measure_clist_impl:{%
-  \clist_if_empty:NF\l_tmpb_clist{%
-    \clist_pop:NN\l_tmpb_clist\l_tmpb_tl%
+  \clist_if_empty:NF\l_measure_clist{%
+    \clist_pop:NN\l_measure_clist\l_tmpb_tl%
     \hbox_set:Nn\l_tmpa_box{\l_tmpb_tl}%
     \dim_set:Nn\l_measure_wd_dim{\box_wd:N\l_tmpa_box}%
     \dim_set:Nn\l_measure_ht_dim{\box_ht:N\l_tmpa_box}%
     \dim_set:Nn\l_measure_dp_dim{\box_dp:N\l_tmpa_box}%
-    \group_begin:\beamertools_altmeasure_impl:\group_end:%
+    \group_begin:\measure_clist_impl:\group_end:%
     \dim_gset:Nn\g_measure_wd_dim{\dim_max:nn{\l_measure_wd_dim}{\g_measure_wd_dim}}%
     \dim_gset:Nn\g_measure_ht_dim{\dim_max:nn{\l_measure_ht_dim}{\g_measure_ht_dim}}%
     \dim_gset:Nn\g_measure_dp_dim{\dim_max:nn{\l_measure_dp_dim}{\g_measure_dp_dim}}%
   }%
-}
-
-% Measure the contents from #1 and leave the maximum width in the stream
-\NewDocumentCommand{\MaxWidth}{m}{%
-  \clist_set:Nn\l_tmpb_clist{#1}%
-  \group_begin:\beamertools_altmeasure_impl:\group_end:%
-  \g_measure_wd_dim%
 }
