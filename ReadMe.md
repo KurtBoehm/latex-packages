@@ -12,6 +12,7 @@ The packages are:
 - `Fonts`: Set up a variety fonts. The fonts are either taken from packages included in TeX Live or assumed to be in a `fonts` folder within the same parent folder as `packages`.
 - `Listings`: Extended language definitions for `listings`.
 - `Maths`: A lot of mathematical utilities. `\del` is the most noteworthy and allows for uses such as `\del(a)` and `\del{b}`, which are typeset using `\left` and `\right`.
+- `Measure`: Measure multiple contents and compute dimensions based on the results.
 - `Memoir`: Configure `memoir` to use small caps in a lot of places.
 - `MemoirHeader`: Configure the `memoir` headers modified by `Memoir` to use a given font. Originally designed to use Cormorant Garamond for the headers and EB Garamond for the text, but other combinations are possible, too.
 - `NumberFormat`: Format a number, especially to align numbers in a table.
