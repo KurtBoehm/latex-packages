@@ -23,3 +23,10 @@
     \dim_gset:Nn\g_measure_dp_dim{\dim_max:nn{\l_measure_dp_dim}{\g_measure_dp_dim}}%
   }%
 }
+\cs_new:Nn\measure_clist:n{%
+  \clist_set:Nn\l_measure_clist{#1}%
+  \dim_gzero:N\g_measure_wd_dim%
+  \dim_gzero:N\g_measure_dp_dim%
+  \dim_gzero:N\g_measure_ht_dim%
+  \group_begin:\measure_clist_impl:\group_end:%
+}
