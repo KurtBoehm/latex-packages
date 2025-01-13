@@ -224,5 +224,24 @@
   Ysabeau.value_forbidden:n = true,
 }
 
+\regex_const:Nn\g_font_family_regex{\A(.*)\(\d+\)\Z}
+\seq_const_from_clist:Nn\g_font_polytonic_seq{Ysabeau,EBGaramond}
+\cs_new:Nn\font_current:{\tl_to_str:e{\the\font}}
+\cs_new:Nn\font_current_family:N{
+  \tl_set:Ne\l_tmpa_tl{\font_current:}%
+  \regex_split:nVN{/}\l_tmpa_tl\l_tmpa_seq%
+  \tl_set:Ne\l_tmpb_tl{\seq_item:Nn\l_tmpa_seq{2}}%
+  \regex_extract_once:NVN\g_font_family_regex\l_tmpb_tl\l_tmpb_seq%
+  % Get l_tmpb_seq[1], i.e. the first group
+  \seq_pop_left:NN\l_tmpb_seq\l_tmpa_tl%
+  \seq_pop_left:NN\l_tmpb_seq#1%
+}
+\NewDocumentCommand{\IfSupportsPolytonicGreekTF}{m m}{%
+  \font_current_family:N\l_tmpa_tl%
+  \bool_set_false:N\l_tmpa_bool%
+  \seq_map_inline:Nn\g_font_polytonic_seq{\str_if_eq:VnT\l_tmpa_tl{##1}{\bool_set_true:N\l_tmpa_bool}}%
+  \bool_if:NTF\l_tmpa_bool{#1}{#2}%
+}
+
 \ProcessKeysOptions{font_config_keys}
 \AtBeginDocument{\let\UrlFont\codefamily}
