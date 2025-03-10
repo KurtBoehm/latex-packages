@@ -1,0 +1,12 @@
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{packages/LanguageCases}{2024-08-20}{1.1}{Language Tools}
+\RequirePackage{xparse}
+
+\msg_new:nnn{LanguageCases}{current-language-not-present}{The ~ current ~ language ~ "#1" ~ is ~ not ~ present}
+
+\NewDocumentCommand{\LanguageCases}{+m}{%
+  \prop_set_from_keyval:Nn\l_tmpa_prop{#1}%
+  \prop_log:N\l_tmpa_prop%
+  \prop_get:NVNF\l_tmpa_prop{\languagename}\l_tmpa_tl{\msg_error:nnx{LanguageCases}{current-language-not-present}{\languagename}}%
+  \tl_use:N\l_tmpa_tl%
+}
