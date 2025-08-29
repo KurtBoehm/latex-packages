@@ -1,0 +1,26 @@
+\RequirePackage{l3keys2e}
+\ProvidesExplPackage{packages/QrCode}{2025-08-29}{1.0}{TikZ QR Codes}
+\RequirePackage{tikz}
+\RequirePackage{packages/UnixTime}
+
+% Initialize/update if tikz_qrcode does not exist or is more than 24 hours old
+\cs_new:Nn\semco_venv_init:{
+  \sys_shell_now:n{python3 ~ -m ~ venv ~ .qrcode}
+  \sys_shell_now:n{./.qrcode/bin/pip3 ~ install ~ git+https://github.com/KurtBoehm/tikz-qrcode.git}
+}
+\file_if_exist:nTF{.qrcode/bin/tikz_qrcode}{
+  \int_new:N\g_qrcode_age_int
+  \unixtime_file_age:nN{.qrcode/bin/tikz_qrcode}\g_qrcode_age_int
+  \tl_log:e{tikz_qrcode~age:~\int_use:N\g_qrcode_age_int}
+  \int_compare:nT{\g_qrcode_age_int > 86400}{\semco_venv_init:}
+}{\semco_venv_init:}
+
+\sys_shell_now:n{echo ~ "*" ~ > ~ .qrcode/.gitignore}
+
+% #1: the edge length of each square making up the QR code
+% #2: the message to be represented by the QR code
+% #3: additional style specifications that apply to each area of the QR code
+\NewDocumentCommand{\QrCode}{m m O{}}{
+  \sys_get_shell:nnN{.qrcode/bin/tikz_qrcode~#1~'#3'~#2}{}\g_tmpa_tl
+  \tl_use:N\g_tmpa_tl
+}
