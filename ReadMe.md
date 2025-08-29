@@ -18,6 +18,7 @@ The packages are:
 - `MemoirHeader`: Configure the `memoir` headers modified by `Memoir` to use a given font. Originally designed to use Cormorant Garamond for the headers and EB Garamond for the text, but other combinations are possible, too.
 - `NumberFormat`: Format a number, especially to align numbers in a table.
 - `OpenColor`: Provide `xcolor` definitions for the [OpenColor](https://yeun.github.io/open-color/) colours.
+- `QrCode`: Generate TikZ-based QR codes using [`tikz-qrcode`](https://github.com/KurtBoehm/tikz-qrcode).
 - `RoundedRectangle`: A TikZ rounded rectangle with a per-corner radius.
 - `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
 - `Units`: Set up `siunitx` and add a few units.
