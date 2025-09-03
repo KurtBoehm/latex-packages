@@ -5,6 +5,7 @@
 
 % Initialize/update if tikz_qrcode does not exist or is more than 24 hours old
 \cs_new:Nn\semco_venv_init:{
+  \sys_shell_now:n{rm ~ -rf ~ .qrcode}
   \sys_shell_now:n{python3 ~ -m ~ venv ~ .qrcode}
   \sys_shell_now:n{./.qrcode/bin/pip3 ~ install ~ git+https://github.com/KurtBoehm/tikz-qrcode.git}
 }
