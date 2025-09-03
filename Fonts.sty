@@ -17,6 +17,9 @@
   NumberStyle.tl_set:N = \l_font_config_numbers_tl,
   NumberStyle.initial:n = Lining,
   NumberStyle.value_required:n = true,
+  IosevkaScale.tl_set:N = \l_font_config_ioscale_tl,
+  IosevkaScale.initial:n = MatchLowercase,
+  IosevkaScale.value_required:n = true,
 
   CascadiaMono.code:n = {
     \setmonofont{CascadiaMono}[
@@ -151,7 +154,7 @@
       BoldFont       = *-Bold,
       ItalicFont     = *-Italic,
       BoldItalicFont = *-BoldItalic,
-      Scale          = MatchLowercase,
+      Scale          = \l_font_config_ioscale_tl,
       Numbers        = \l_font_config_numbers_tl,
     ]
   },
@@ -164,7 +167,7 @@
       BoldFont       = *-Regular,
       ItalicFont     = *-LightItalic,
       BoldItalicFont = *-Italic,
-      Scale          = MatchLowercase,
+      Scale          = \l_font_config_ioscale_tl,
       Numbers        = \l_font_config_numbers_tl,
     ]
   },
@@ -177,7 +180,7 @@
       BoldFont       = *-Bold,
       ItalicFont     = *-Italic,
       BoldItalicFont = *-BoldItalic,
-      Scale          = MatchLowercase,
+      Scale          = \l_font_config_ioscale_tl,
       Numbers        = \l_font_config_numbers_tl,
     ]
     \let\codefamily\IosevkaQuasi
@@ -191,7 +194,7 @@
       BoldFont       = *-Regular,
       ItalicFont     = *-LightItalic,
       BoldItalicFont = *-Italic,
-      Scale          = MatchLowercase,
+      Scale          = \l_font_config_ioscale_tl,
       Numbers        = \l_font_config_numbers_tl,
     ]
     \let\codefamily\IosevkaQuasi
