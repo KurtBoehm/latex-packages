@@ -156,10 +156,6 @@
 \cs_generate_variant:Nn\sys_get_shell:nnN{enN}
 
 % #1: Destination, #2: Source
-\cs_new:Nn\semco_tl_to_str:NN{%
-  \str_set:NV#1#2%
-  \str_replace_all:Nnx#1{##}{\c_hash_str}%
-}
 \cs_new:Nn\semco_tl_to_str:Nn{%
   \str_set:Nn#1{#2}%
   \str_replace_all:Nnx#1{##}{\c_hash_str}%
@@ -191,7 +187,8 @@
 % Write #1 to the SemCo VRB file and set \g_semco_vrb_path to the corresponding path
 \cs_new:Nn\semco_write_vrb:n{%
   \iow_open:Nn\g_semco_code_iow{\semco_vrb_name:}%
-  \iow_now:Nn\g_semco_code_iow{#1}%
+  \semco_tl_to_str:Nn\l_tmpa_tl{#1}%
+  \iow_now:NV\g_semco_code_iow\l_tmpa_tl%
   \iow_close:N\g_semco_code_iow%
   \semco_setup_vrb:%
 }
