@@ -254,6 +254,8 @@
 }{%
   \endVerbatimOut%
   \semco_setup_vrb:%
-  \SemCoAnalyze{#1}{#2}{\g_semco_output_dir}{\semco_vrb_name:}%
-  \semco_clean_vrb:{}%
+  \tl_set:Nn\g_semco_file_name{.semco/#2}%
+  \sys_shell_now:e{mv ~ -f ~ "\g_semco_vrb_path" ~ "\g_semco_file_name"}%
+  \SemCoAnalyze{#1}{#2}{.semco}{#2}%
+  \sys_shell_now:e{rm ~ '\g_semco_file_name'}%
 }
