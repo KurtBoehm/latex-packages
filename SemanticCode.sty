@@ -217,8 +217,8 @@
     % clean cache
     \sys_shell_now:n{rm ~ .semco/.cache}%
     \sys_shell_now:n{touch ~ .semco/.cache}%
-    \prop_clear:N\g_semco_part_prop%
-    \prop_clear:N\g_semco_mini_prop%
+    \prop_gclear:N\g_semco_part_prop%
+    \prop_gclear:N\g_semco_mini_prop%
   }%
 }
 
