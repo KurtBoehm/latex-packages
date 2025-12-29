@@ -19,7 +19,7 @@ The packages are:
 - `NumberFormat`: Format a number, especially to align numbers in a table.
 - `OpenColor`: Provide `xcolor` definitions for the [OpenColor](https://yeun.github.io/open-color/) colours.
 - `Picta`: My own colour scheme, which is already available in a VS Code theme.
-- `QrCode`: Generate TikZ-based QR codes using [`tikz-qrcode`](https://github.com/KurtBoehm/tikz-qrcode).
+- `QrCode`: Generate TikZ-based QR codes using [PolyQR](https://github.com/KurtBoehm/polyqr).
 - `RoundedRectangle`: A TikZ rounded rectangle with a per-corner radius.
 - `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
 - `Units`: Set up `siunitx` and add a few units.
