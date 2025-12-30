@@ -7,7 +7,7 @@
 \cs_new:Nn\semco_venv_init:{
   \sys_shell_now:n{rm ~ -rf ~ .qrcode}
   \sys_shell_now:n{python3 ~ -m ~ venv ~ .qrcode}
-  \sys_shell_now:n{./.qrcode/bin/pip3 ~ install ~ git+https://github.com/KurtBoehm/polyqr.git}
+  \sys_shell_now:n{./.qrcode/bin/pip3 ~ install ~ polyqr}
 }
 \file_if_exist:nTF{.qrcode/bin/polyqr_tikz}{
   \int_new:N\g_qrcode_age_int
