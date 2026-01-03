@@ -20,6 +20,7 @@ The packages are:
 - `OpenColor`: Provide `xcolor` definitions for the [OpenColor](https://yeun.github.io/open-color/) colours.
 - `Picta`: My own colour scheme, which is already available in a VS Code theme.
 - `QrCode`: Generate TikZ-based QR codes using [PolyQR](https://github.com/KurtBoehm/polyqr).
+- `RadixColors`: Provide `xcolor` definitions for the [Radix](https://www.radix-ui.com/colors/) colours.
 - `RoundedRectangle`: A TikZ rounded rectangle with a per-corner radius.
 - `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
 - `Units`: Set up `siunitx` and add a few units.
