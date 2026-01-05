@@ -25,3 +25,7 @@ The packages are:
 - `SemanticCode`: Highlight code using `pysemco_tex` from [`pysemco`](https://github.com/KurtBoehm/pysemco).
 - `Units`: Set up `siunitx` and add a few units.
 - `UnixTime`: Convert the timestamps provided by LaTeX3 to Unix timestamps (without leap seconds), with commands to query Unix timestamps directly.
+
+## License
+
+The packages within this project are licensed under the terms of the LaTeX Project Public License 1.3 or later, which is provided in [`License`](License).
