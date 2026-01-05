@@ -132,6 +132,10 @@
   FiraSansLight.value_forbidden:n = true,
   FiraMath.code:n = {
     \setmathfont{FiraMath-Regular.otf}
+    \setmathfont{FiraMath-Bold.otf}[
+      version=bold,
+      Path=\tl_use:N\l_font_config_folder_tl fira-math/
+    ]
   },
   FiraMath.value_forbidden:n = true,
   FiraMathLight.code:n = {
@@ -139,7 +143,6 @@
       Path=\tl_use:N\l_font_config_folder_tl fira-math/
     ]
     \setmathfont{FiraMath-Regular.otf}[version=bold]
-    \g@addto@macro\bfseries{\boldmath}
   },
   FiraMathLight.value_forbidden:n = true,
   GFSNeoHellenic.code:n = {
