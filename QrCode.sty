@@ -18,11 +18,13 @@
 
 \sys_shell_now:n{echo ~ "*" ~ > ~ .qrcode/.gitignore}
 
+\cs_generate_variant:Nn\sys_get_shell:nnN{enN}
+
 % #1: with a star, #2 is the QR code size, otherwise it is the module size
 % #2: the module/full size of the QR code
 % #3: the message to be represented by the QR code
 % #4: additional style specifications that apply to each area of the QR code
 \NewDocumentCommand{\QrCode}{s m m O{}}{
-  \sys_get_shell:nnN{.qrcode/bin/polyqr_tikz\IfBooleanT{#1}{--full-size}~#2~'#4'~#3}{}\g_tmpa_tl
+  \sys_get_shell:enN{.qrcode/bin/polyqr_tikz~\IfBooleanT{#1}{--full-size}~#2~'#4'~#3}{}\g_tmpa_tl
   \tl_use:N\g_tmpa_tl
 }
