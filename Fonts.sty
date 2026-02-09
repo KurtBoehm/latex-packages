@@ -36,6 +36,11 @@
   IosevkaScale.initial:n = MatchLowercase,
   IosevkaScale.value_required:n = true,
 
+  BoldMath.bool_gset:N = \l_font_config_boldmath_bool,
+  BoldMath.code:n = {%
+    \g@addto@macro\bfseries{\boldmath}%
+  },
+
   CascadiaMono.code:n = {
     \setmonofont{CascadiaMono}[
       Path           = \tl_use:N\l_font_config_folder_tl cascadia-mono/,
