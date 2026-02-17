@@ -19,7 +19,7 @@
 \RequirePackage{packages/UnixTime}
 
 % Initialize/update if polyqr_tikz does not exist or is more than 24 hours old
-\cs_new:Nn\semco_venv_init:{
+\cs_new:Nn\qrcode_venv_init:{
   \sys_shell_now:n{rm ~ -rf ~ .qrcode}
   \sys_shell_now:n{python3 ~ -m ~ venv ~ .qrcode}
   \sys_shell_now:n{./.qrcode/bin/pip3 ~ install ~ polyqr}
@@ -28,8 +28,8 @@
   \int_new:N\g_qrcode_age_int
   \unixtime_file_age:nN{.qrcode/bin/polyqr_tikz}\g_qrcode_age_int
   \tl_log:e{polyqr_tikz~age:~\int_use:N\g_qrcode_age_int}
-  \int_compare:nT{\g_qrcode_age_int > 86400}{\semco_venv_init:}
-}{\semco_venv_init:}
+  \int_compare:nT{\g_qrcode_age_int > 86400}{\qrcode_venv_init:}
+}{\qrcode_venv_init:}
 
 \sys_shell_now:n{echo ~ "*" ~ > ~ .qrcode/.gitignore}
 
