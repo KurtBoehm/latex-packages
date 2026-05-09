@@ -13,37 +13,40 @@
 %
 % The Current Maintainer of this work is Kurt Böhm.
 
+% Apply settings to presentation mode
 \mode<presentation>
 
-% progressbar=frametitle
 \usetheme{moloch}
 
-\makeatletter
-\setlength{\moloch@titleseparator@linewidth}{1pt}
-\setlength{\moloch@progressonsectionpage@linewidth}{1pt}
-\setlength{\moloch@progressinheadfoot@linewidth}{1pt}
-\makeatother
 \setbeamertemplate{frametitle continuation}{}
 \setbeamerfont{footline}{size=\addfontfeature{Numbers=Monospaced}}
 
-%\setbeamertemplate{itemize items}[circle]
+%%%%%%%%%%%%%%%%%%
+% Color Settings %
+%%%%%%%%%%%%%%%%%%
 
-% color settings
 \definecolor{TUCgreen}{RGB}{0,140,79}
-\definecolor{TUCgrey1}{RGB}{128,128,128}
-\definecolor{TUCgrey2}{RGB}{230,230,230}
+\definecolor{TUCgrey1}{RGB}{128,128,128} % mid grey
+\definecolor{TUCgrey2}{RGB}{230,230,230} % light grey
 \definecolor{TUCred}{RGB}{140,28,0}
-\setbeamercolor{normal text}{fg=black,bg=white}
-\setbeamercolor{alerted text}{fg=TUCred}
-\setbeamercolor{example text}{fg=TUCgreen}
-% inverted: fg = TUCgreen, bg = normal text.bg
-\setbeamercolor{palette primary}{use = normal text, fg = white, bg = TUCgreen}
-\setbeamercolor{title separator}{fg=TUCgreen}
-\setbeamercolor{progress bar}{fg=TUCgreen}
 
-% font settings
+\molochcolors{
+  light/normal text bg=white,
+  light/frametitle fg=white,
+  light/frametitle bg=TUCgreen,
+  light/progressbar fg=TUCgreen,
+  light/title separator=TUCgreen,
+}
+
+%%%%%%%%%%%%%%%%%
+% Font Settings %
+%%%%%%%%%%%%%%%%%
+
+% Use document fonts without beamer defaults
 \usefonttheme{professionalfonts}
+% Inherit list font for subitems
 \setbeamerfont*{itemize/enumerate subbody}{parent=itemize/enumerate body}
+% Inherit list font for subsubitems
 \setbeamerfont*{itemize/enumerate subsubbody}{parent=itemize/enumerate body}
 
 \mode<all>
