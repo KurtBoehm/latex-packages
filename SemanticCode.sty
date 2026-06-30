@@ -27,9 +27,9 @@
 \prop_new:N\g_semco_style_prop
 \prop_new:N\g_semco_styles_prop
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 % Colorful style mapping
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 
 \cs_new:Nn\semco_colorful_function:n{\textcolor{PictaGreenMedium}{#1}}
 \cs_new:Nn\semco_colorful_keyword:n{\textcolor{PictaRedMedium}{#1}}
@@ -68,20 +68,20 @@
 \cs_new:Nn\semco_colorful_typ:n{\semco_colorful_type:n{#1}}
 \cs_new:Nn\semco_colorful_var:n{\semco_colorful_variable:n{#1}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 % Black/white style mapping
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 
 \cs_new:Nn\semco_bw_mem:n{\textit{#1}}
 \cs_new:Nn\semco_bw_com:n{\textcolor{gray}{#1}}
 \cs_new:Nn\semco_bw_kwd:n{\textbf{#1}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 % Style selection
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 
 % Register built-in styles and token classes for the colorful theme.
-\cs_new:Nn\semco_style_colorful:{
+\cs_new:Nn\semco_style_set_colorful:{
   \prop_gset_from_keyval:Nn\g_semco_style_prop{
     attribute         = {\semco_colorful_attr:n},
     builtin-variable  = {\semco_colorful_blt_var:n},
@@ -116,7 +116,7 @@
 }
 
 % Register built-in styles and token classes for the black/white theme.
-\cs_new:Nn\semco_style_bw:{
+\cs_new:Nn\semco_style_set_bw:{
   \prop_gset_from_keyval:Nn\g_semco_style_prop{
     comment       = {\semco_bw_com:n},
     keyword       = {\semco_bw_kwd:n},
@@ -129,12 +129,12 @@
 
 % Public style registry.
 \prop_gset_from_keyval:Nn\g_semco_styles_prop{
-  bw       = {\semco_style_bw:},
-  colorful = {\semco_style_colorful:},
+  bw       = {\semco_style_set_bw:},
+  colorful = {\semco_style_set_colorful:},
 }
 
 % Default style.
-\semco_style_colorful:{}
+\semco_style_set_colorful:{}
 
 \keys_define:nn{semco_keys}{
   style.code:n = {\prop_item:Nn\g_semco_styles_prop{#1}},
@@ -183,9 +183,9 @@
   \prop_get:NnNTF\g_semco_style_prop{#1}\l_tmpa_tl{\l_tmpa_tl{#2}}{#2}%
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 % Cache and temporary file handling
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ------------------------------------------------------------------------------
 
 \iow_new:N\g_semco_code_iow
 \iow_new:N\g_semco_cache_iow
@@ -206,27 +206,23 @@
 \cs_generate_variant:Nn\sys_get_shell:nnN{enN}
 
 % Write the in-memory cache to disk.
-\cs_new_protected:Npn\semco_write_cache:{
+\cs_new:Nn\semco_write_cache:{
   \iow_open:Nn\g_semco_cache_iow{\g_semco_cache_path_tl}
   \iow_now:Nn\g_semco_cache_iow{\ExplSyntaxOff}
 
   \prop_map_inline:Nn\g_semco_part_prop{
-    \tl_set:Nn\l_semco_cache_key_tl{##1}
-    \tl_set:Nn\l_semco_cache_val_tl{##2}
     \iow_now:Nx\g_semco_cache_iow{
       \exp_not:N\@semco@store@part@cache
-      \exp_not:V\l_semco_cache_key_tl
-      {\exp_not:V\l_semco_cache_val_tl}
+      \exp_not:n{{##1}}
+      {\exp_not:n{##2}}
     }
   }
 
   \prop_map_inline:Nn\g_semco_mini_prop{
-    \tl_set:Nn\l_semco_cache_key_tl{##1}
-    \tl_set:Nn\l_semco_cache_val_tl{##2}
     \iow_now:Nx\g_semco_cache_iow{
       \exp_not:N\@semco@store@mini@cache
-      \exp_not:V\l_semco_cache_key_tl
-      {\exp_not:V\l_semco_cache_val_tl}
+      \exp_not:n{{##1}}
+      {\exp_not:n{##2}}
     }
   }
 
@@ -292,6 +288,10 @@
 \cs_new:Nn\semco_clean_vrb:{%
   \sys_shell_now:e{rm ~ '\g_semco_vrb_path'}%
 }
+
+% ------------------------------------------------------------------------------
+% Public analysis and formatting commands
+% ------------------------------------------------------------------------------
 
 % #1: language
 % #2: code name to refer to later
