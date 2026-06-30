@@ -14,7 +14,7 @@
 % The Current Maintainer of this work is Kurt Böhm.
 
 \RequirePackage{l3keys2e}
-\ProvidesExplPackage{packages/SemanticCode}{2025-12-15}{1.4}{Semantic Code Analysis and Typesetting}
+\ProvidesExplPackage{packages/SemanticCode}{2026-06-30}{1.4.1}{Semantic Code Analysis and Typesetting}
 \RequirePackage{fancyvrb}
 \RequirePackage{xcolor}
 \RequirePackage{packages/Env}
@@ -172,6 +172,7 @@
 \cs_new:Nn\semco_tl_to_str:Nn{%
   \str_set:Nn#1{#2}%
   \str_replace_all:Nnx#1{##}{\c_hash_str}%
+  \str_replace_all:Nnx#1{\\}{\c_backslash_str}%
 }
 
 \sys_shell_now:n{mkdir ~ -p ~ .semco}
